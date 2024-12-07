@@ -1,25 +1,55 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-//import { useForm } from "react-hook-form"
 import Cookies from "js-cookie";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  //Form Validation
+  const validate = () => {
+    const newErrors = {};
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  //handle changes in input field
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value, 
+      [name]: value,
     });
   };
 
-  const navigate = useNavigate();
-
+  //handle form submit
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
+    //handles validation error
+    if (!validate()) {
+      toast.error("Please enter required fields before submitting.");
+      return;
+    }
+    //Handling API
     try {
       const response = await fetch("https://rfpdemo.velsof.com/api/login", {
         method: "POST",
@@ -30,31 +60,28 @@ function Login() {
       });
 
       const data = await response.json();
-
+      // Set the token in cookies
       const setTokenInCookies = (token) => {
-        // Set the token in cookies
-        Cookies.set("token", token, { expires: 1, secure: true }); 
+        Cookies.set("token", token, { expires: 1, secure: true });
       };
-      
-      
-      setTokenInCookies(data.token); 
 
-      console.log("response",data.response)
+      setTokenInCookies(data.token);
+
+      console.log("response", data.response);
       if (data.response == "success") {
-        toast.success('Login successful')
-        navigate("/dashboard")
+        toast.success("Login successful");
+        navigate("/dashboard");
       } else {
-        toast.error("Invalid Credentials")
+        toast.error("Invalid Credentials");
       }
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
     }
   };
-  
 
   return (
     <div>
-       <Toaster />
+      <Toaster />
       <div className="account-pages my-5 pt-sm-5">
         <div className="container">
           <div className="row justify-content-center">
@@ -72,11 +99,7 @@ function Login() {
                 </div>
                 <div className="card-body pt-0">
                   <div className="p-2">
-                    <form
-                      className="form-horizontal"
-                      action="index.html"
-                      onSubmit={handleSubmit}
-                    >
+                    <form className="form-horizontal" onSubmit={handleSubmit}> 
                       <div className="form-group form-contr">
                         <label htmlFor="username">Email</label>
                         <input
@@ -87,10 +110,10 @@ function Login() {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          // {...register("email",{required:{value:true, message:"Enter password"}})}
-                          
                         />
-                        {/* <p className="error">{errors.email?.message}</p> */}
+                        {errors.email && (
+                          <p className="error">{errors.email}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -103,10 +126,10 @@ function Login() {
                           placeholder="Enter password"
                           value={formData.password}
                           onChange={handleChange}
-                          // {...register("password",{required:{value:true, message:"Enter password"}})}
-                          
                         />
-                        {/* <p className="error">{errors.password?.message}</p> */}
+                        {errors.password && (
+                          <p className="error">{errors.password}</p>
+                        )}
                       </div>
 
                       <div className="mt-3">

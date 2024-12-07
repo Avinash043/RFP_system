@@ -1,8 +1,6 @@
 .error {
   color: red;
-  font-size: 12px;
-  text-align: left;
-  margin-top: 10px;
+  font-size: 0.9em;
 }
 
 #page-topbar {

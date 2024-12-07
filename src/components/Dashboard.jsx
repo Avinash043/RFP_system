@@ -1,5 +1,3 @@
-import React from "react";
-import { Link } from "react-router";
 import SideleftBar from "./SideleftBar";
 import Header from "./Header";
 

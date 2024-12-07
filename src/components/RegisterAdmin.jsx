@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 function RegisterAdmin() {
   const [formData, setFormData] = useState({
@@ -11,19 +11,59 @@ function RegisterAdmin() {
     confirmpassword: "",
     mobile: "",
   });
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  
+  //Form validation
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.firstname) newErrors.firstname = "First name is required.";
+    if (!formData.lastname) newErrors.lastname = "Last name is required.";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+   
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } 
+    if (!formData.confirmpassword) {
+      newErrors.confirmpassword = "Confirm Password is required";
+    } 
+    if (formData.password !== formData.confirmpassword) {
+      newErrors.confirmpassword = "Passwords do not match.";
+    }
+    if (!formData.mobile.trim() || !/^\d{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Enter a valid 10-digit phone number.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+ //handle changes in input field
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value, // Dynamically update the property using the name attribute
+      [name]: value,
     });
   };
 
-  const navigate = useNavigate();
-
+  
+//handle form submit
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
 
+    if (!validate()) {
+      toast.error("Please enter required fields before submitting.");
+      return;
+    }
+ //handling API
     try {
       const response = await fetch(
         "https://rfpdemo.velsof.com/api/registeradmin",
@@ -39,10 +79,10 @@ function RegisterAdmin() {
       const data = await response.json();
 
       if (data.response == "success") {
-        toast.success('Register as Admin')
-        navigate("/dashboard")
+        toast.success("Register as Admin");
+        navigate("/dashboard");
       } else {
-        toast.error("Invalid Credentials")
+        toast.error("Invalid Credentials");
       }
     } catch (error) {
       toast.error("Network error:", error);
@@ -83,8 +123,11 @@ function RegisterAdmin() {
                           name="firstname"
                           value={formData.firstname}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.firstname && (
+                          <p className="error">{errors.firstname}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -97,8 +140,11 @@ function RegisterAdmin() {
                           placeholder="Last Name"
                           value={formData.lastname}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.lastname && (
+                          <p className="error">{errors.lastname}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label htmlFor="email">Email</label>
@@ -110,8 +156,11 @@ function RegisterAdmin() {
                           placeholder="Email"
                           value={formData.email}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.email && (
+                          <p className="error">{errors.email}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label htmlFor="mobile">Mobile</label>
@@ -123,8 +172,11 @@ function RegisterAdmin() {
                           placeholder="Enter mobile number"
                           value={formData.mobile}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.mobile && (
+                          <p className="error">{errors.mobile}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label htmlFor="userPassword">Password</label>
@@ -136,8 +188,11 @@ function RegisterAdmin() {
                           placeholder="Enter password"
                           value={formData.password}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.password && (
+                          <p className="error">{errors.password}</p>
+                        )}
                       </div>
                       <div className="form-group">
                         <label htmlFor="confirmPassword">
@@ -151,8 +206,11 @@ function RegisterAdmin() {
                           placeholder="Enter password"
                           value={formData.confirmpassword}
                           onChange={handleChange}
-                          required
+                          
                         />
+                        {errors.confirmpassword && (
+                          <p className="error">{errors.confirmpassword}</p>
+                        )}
                       </div>
 
                       <div className="mt-3">

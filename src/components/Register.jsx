@@ -17,6 +17,7 @@ function Register() {
     gst_no: "",
     mobile: "",
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,19 +25,59 @@ function Register() {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
-        // type === "select-multiple"
-        //   ? Array.from(options)
-        //       .filter((option) => option.selected)
-        //       .map((option) => option.value)
-        //       .join(",") // Join selected values into a single comma-separated string
-        //   : value,
+      [name]: value,
+     
     }));
+    setErrors({ ...errors, [name]: "" });
   };
+
+  const validate = () => {
+    const newErrors = {};
+    // Check required fields
+    if (!formData.firstname) newErrors.firstname = "First name is required.";
+    if (!formData.lastname) newErrors.lastname = "Last name is required.";
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email address.";
+    }
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (!formData.confirmpassword) {
+      newErrors.confirmpassword = "Confirm Password is required";
+    } 
+    if (formData.password !== formData.confirmpassword) {
+      newErrors.confirmpassword = "Passwords do not match.";
+    }
+    if (!formData.revenue || isNaN(formData.revenue)) {
+      newErrors.revenue = "Revenue must be a number.";
+    }
+    if (!formData.no_of_employees || isNaN(formData.no_of_employees)) {
+      newErrors.no_of_employees = "Number of employees must be a number.";
+    }
+    if (!formData.gst_no) newErrors.gst_no = "GST No is required.";
+    if (!formData.pancard_no) newErrors.pancard_no = "PAN No is required.";
+    if (!formData.mobile.trim() || !/^\d{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Enter a valid 10-digit phone number.";
+    }
+    if (formData.category.length === 0) {
+      newErrors.category = "At least one category must be selected.";
+    }
+
+    setErrors(newErrors);
+
+    // Return true if no errors
+    return Object.keys(newErrors).length === 0;
+  };
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-
+    const isValid = validate();
+    if (!isValid) {
+      toast.error("Please enter required fields before submitting.");
+      return;
+    }
     try {
       const response = await fetch(
         "https://rfpdemo.velsof.com/api/registervendor",
@@ -100,8 +141,9 @@ function Register() {
                               name="firstname"
                               value={formData.firstname}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.firstname && <small className="text-danger">{errors.firstname}</small>}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -117,8 +159,9 @@ function Register() {
                               name="lastname"
                               value={formData.lastname}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.lastname && <small className="text-danger">{errors.lastname}</small>}
                           </div>
                         </div>
                         <div className="col-md-12">
@@ -132,8 +175,9 @@ function Register() {
                               name="email"
                               value={formData.email}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.email && <small className="text-danger">{errors.email}</small>}
                           </div>
                         </div>
 
@@ -148,8 +192,9 @@ function Register() {
                               name="password"
                               value={formData.password}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.password && <small className="text-danger">{errors.password}</small>}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -163,8 +208,9 @@ function Register() {
                               value={formData.confirmpassword}
                               placeholder="Enter Confirm Password"
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.confirmpassword && <small className="text-danger">{errors.confirmpassword}</small>}
                           </div>
                         </div>
 
@@ -181,8 +227,9 @@ function Register() {
                               name="revenue"
                               value={formData.revenue}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.revenue && <small className="text-danger">{errors.revenue}</small>}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -198,8 +245,9 @@ function Register() {
                               name="no_of_employees"
                               value={formData.no_of_employees}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.no_of_employees && <small className="text-danger">{errors.no_of_employees}</small>}
                           </div>
                         </div>
 
@@ -214,8 +262,9 @@ function Register() {
                               name="gst_no"
                               value={formData.gst_no}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.gst_no && <small className="text-danger">{errors.gst_no}</small>}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -229,8 +278,9 @@ function Register() {
                               name="pancard_no"
                               value={formData.pancard_no}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.pancard_no && <small className="text-danger">{errors.pancard_no}</small>}
                           </div>
                         </div>
 
@@ -245,8 +295,9 @@ function Register() {
                               name="mobile"
                               value={formData.mobile}
                               onChange={handleChange}
-                              required
+                              
                             />
+                            {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -259,7 +310,7 @@ function Register() {
                               name="category"
                               value={formData.category}
                               onChange={handleChange}
-                              required
+                              
                             >
                               <option value="">All Categories</option>
                               <option value="1">Software</option>
@@ -267,6 +318,7 @@ function Register() {
                               <option value="3">Office Furniture</option>
                               <option value="4">Stationery</option>
                             </select>
+                            {errors.category && <small className="text-danger">{errors.category}</small>}
                           </div>
                         </div>
 
