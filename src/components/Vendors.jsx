@@ -31,17 +31,20 @@ function Vendors() {
             },
           }
         );
+        console.log("res",response)
+        const data = await response.json();
+        console.log("data",data)
 
         if (data.response == "error") {
           toast.error('Action not allowed')
         } 
 
-        const data = await response.json();
+       
 
         setVendorList(data.vendors);
         
       } catch (err) {
-        toast.error(err.message);
+        console.error(err.message);
       }
     };
 

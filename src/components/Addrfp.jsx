@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import Header from "./Header";
 import SideleftBar from "./SideleftBar";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 function Addrfp() {
   const [formData, setFormData] = useState({
@@ -34,11 +34,10 @@ function Addrfp() {
         body: JSON.stringify(formData),
       });
 
-      console.log("res",response);
+      console.log("res", response);
 
       const result = await response.json();
       if (result.response == "success") {
-       
         console.log("Data submitted successfully:", result);
         toast("Form submitted successfully!");
         setFormData({
@@ -51,21 +50,19 @@ function Addrfp() {
           categories: "",
           vendors: "",
           item_description: "",
-        }); 
+        });
       } else {
-       
         toast("Error submitting form.");
       }
     } catch (error) {
-      toast.error("Error:", error);
-      
+      console.error("Error:", error);
     }
   };
 
   return (
     <div data-sidebar="dark">
       <div id="layout-wrapper">
-      <Toaster />
+        <Toaster />
         {/* Header */}
         <Header />
         {/* <!-- ========== Left Sidebar Start ========== --> */}
@@ -77,6 +74,9 @@ function Addrfp() {
               {/* <!-- start page title --> */}
               <div className="row">
                 <div className="col-12">
+                  <div className="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 className="mb-0 font-size-18">Add RFP </h4>
+                  </div>
                   <form
                     className="form-horizontal"
                     action=""
