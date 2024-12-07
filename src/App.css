@@ -1,0 +1,69 @@
+.error {
+  color: red;
+  font-size: 12px;
+  text-align: left;
+  margin-top: 10px;
+}
+
+#page-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.814);
+  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.navbar-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin: 0 auto;
+  height: 100px;
+  padding: 0 }
+
+.navbar-header .dropdown .show .header-item {
+  background-color: #ffff;
+}
+
+.navbar-brand-box {
+  padding: 0 1.5rem;
+  text-align: center;
+  width: 250px;
+}
+
+.logo {
+  line-height: 70px;
+}
+.logo .logo-sm {
+  display: none;
+}
+
+.logo-light {
+  display: none;
+}
+
+.page-title-box {
+  padding-bottom: 24px;
+}
+.page-title-box .breadcrumb {
+  background-color: transparent;
+  padding: 0;
+}
+
+.sidebar{
+    background-color: rgba(0, 0, 0, 0.551);
+}
+
