@@ -2,11 +2,22 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import Cookies from "js-cookie";
 import toast, { Toaster } from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+
+  const handleSuccess = (credentialsResponse) => {
+    setFormData((f) => ({ ...f, email: credentialsResponse.email }));
+  };
+
+  const handleError = () => {
+    toast.error("Google Sign In Error");
+  };
+
   //Form Validation
   const validate = () => {
     const newErrors = {};
@@ -22,10 +33,7 @@ function Login() {
     // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
     }
-
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -60,6 +68,7 @@ function Login() {
       });
 
       const data = await response.json();
+
       // Set the token in cookies
       const setTokenInCookies = (token) => {
         Cookies.set("token", token, { expires: 1, secure: true });
@@ -99,7 +108,7 @@ function Login() {
                 </div>
                 <div className="card-body pt-0">
                   <div className="p-2">
-                    <form className="form-horizontal" onSubmit={handleSubmit}> 
+                    <form className="form-horizontal" onSubmit={handleSubmit}>
                       <div className="form-group form-contr">
                         <label htmlFor="username">Email</label>
                         <input
@@ -109,7 +118,9 @@ function Login() {
                           placeholder="Enter Email"
                           name="email"
                           value={formData.email}
-                          onChange={handleChange}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                         />
                         {errors.email && (
                           <p className="error">{errors.email}</p>
@@ -142,35 +153,17 @@ function Login() {
                       </div>
 
                       <div className="mt-4 text-center">
-                        <h5 className="font-size-14 mb-3">Sign in with</h5>
-
-                        <ul className="list-inline">
-                          <li className="list-inline-item">
-                            <a
-                              href="javascript::void()"
-                              className="social-list-item bg-primary text-white border-primary"
-                            >
-                              <i className="mdi mdi-facebook"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item">
-                            <a
-                              href="javascript::void()"
-                              className="social-list-item bg-info text-white border-info"
-                            >
-                              <i className="mdi mdi-twitter"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item">
-                            <a
-                              href="javascript::void()"
-                              className="social-list-item bg-danger text-white border-danger"
-                            >
-                              <i className="mdi mdi-google"></i>
-                            </a>
-                          </li>
-                        </ul>
+                        {/* SIGN IN WITH GOOGLE */}
+                        <div className="flex justify-center items-center h-auto">
+                          <GoogleOAuthProvider clientId="272903930813-2ic6ftaosctgcjqlip1n4k1je2m0tfb3.apps.googleusercontent.com">
+                            <GoogleLogin
+                              onSuccess={handleSuccess}
+                              onError={handleError}
+                            />
+                          </GoogleOAuthProvider>
+                        </div>
                       </div>
+
                       <div className="mt-4 text-center">
                         <Link to="/register" className="text-muted">
                           <i className="mdi mdi-lock mr-1"></i> Register as

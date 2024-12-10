@@ -1,7 +1,6 @@
-
 import { useState } from "react";
-import toast, { Toaster } from 'react-hot-toast';
-import { useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
+import { Link, useNavigate } from "react-router";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -26,7 +25,6 @@ function Register() {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-     
     }));
     setErrors({ ...errors, [name]: "" });
   };
@@ -44,7 +42,7 @@ function Register() {
     if (!formData.password) newErrors.password = "Password is required.";
     if (!formData.confirmpassword) {
       newErrors.confirmpassword = "Confirm Password is required";
-    } 
+    }
     if (formData.password !== formData.confirmpassword) {
       newErrors.confirmpassword = "Passwords do not match.";
     }
@@ -69,10 +67,8 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  
-
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     const isValid = validate();
     if (!isValid) {
       toast.error("Please enter required fields before submitting.");
@@ -92,15 +88,15 @@ function Register() {
 
       const data = await response.json();
       console.log("formData", formData.category);
-      console.log("response",data.response)
+      console.log("response", data.response);
       if (data.response == "success") {
-        toast.success('Register as Vendor')
-        navigate("/dashboard")
+        toast.success("Register as Vendor");
+        navigate("/dashboard");
       } else {
-        toast.error("Invalid Credentials")
+        toast.error("Invalid Credentials");
       }
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
     }
   };
 
@@ -141,9 +137,12 @@ function Register() {
                               name="firstname"
                               value={formData.firstname}
                               onChange={handleChange}
-                              
                             />
-                            {errors.firstname && <small className="text-danger">{errors.firstname}</small>}
+                            {errors.firstname && (
+                              <small className="text-danger">
+                                {errors.firstname}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -159,9 +158,12 @@ function Register() {
                               name="lastname"
                               value={formData.lastname}
                               onChange={handleChange}
-                              
                             />
-                            {errors.lastname && <small className="text-danger">{errors.lastname}</small>}
+                            {errors.lastname && (
+                              <small className="text-danger">
+                                {errors.lastname}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12">
@@ -175,9 +177,12 @@ function Register() {
                               name="email"
                               value={formData.email}
                               onChange={handleChange}
-                              
                             />
-                            {errors.email && <small className="text-danger">{errors.email}</small>}
+                            {errors.email && (
+                              <small className="text-danger">
+                                {errors.email}
+                              </small>
+                            )}
                           </div>
                         </div>
 
@@ -192,9 +197,12 @@ function Register() {
                               name="password"
                               value={formData.password}
                               onChange={handleChange}
-                              
                             />
-                            {errors.password && <small className="text-danger">{errors.password}</small>}
+                            {errors.password && (
+                              <small className="text-danger">
+                                {errors.password}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -208,9 +216,12 @@ function Register() {
                               value={formData.confirmpassword}
                               placeholder="Enter Confirm Password"
                               onChange={handleChange}
-                              
                             />
-                            {errors.confirmpassword && <small className="text-danger">{errors.confirmpassword}</small>}
+                            {errors.confirmpassword && (
+                              <small className="text-danger">
+                                {errors.confirmpassword}
+                              </small>
+                            )}
                           </div>
                         </div>
 
@@ -227,9 +238,12 @@ function Register() {
                               name="revenue"
                               value={formData.revenue}
                               onChange={handleChange}
-                              
                             />
-                            {errors.revenue && <small className="text-danger">{errors.revenue}</small>}
+                            {errors.revenue && (
+                              <small className="text-danger">
+                                {errors.revenue}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -245,9 +259,12 @@ function Register() {
                               name="no_of_employees"
                               value={formData.no_of_employees}
                               onChange={handleChange}
-                              
                             />
-                            {errors.no_of_employees && <small className="text-danger">{errors.no_of_employees}</small>}
+                            {errors.no_of_employees && (
+                              <small className="text-danger">
+                                {errors.no_of_employees}
+                              </small>
+                            )}
                           </div>
                         </div>
 
@@ -262,9 +279,12 @@ function Register() {
                               name="gst_no"
                               value={formData.gst_no}
                               onChange={handleChange}
-                              
                             />
-                            {errors.gst_no && <small className="text-danger">{errors.gst_no}</small>}
+                            {errors.gst_no && (
+                              <small className="text-danger">
+                                {errors.gst_no}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -278,9 +298,12 @@ function Register() {
                               name="pancard_no"
                               value={formData.pancard_no}
                               onChange={handleChange}
-                              
                             />
-                            {errors.pancard_no && <small className="text-danger">{errors.pancard_no}</small>}
+                            {errors.pancard_no && (
+                              <small className="text-danger">
+                                {errors.pancard_no}
+                              </small>
+                            )}
                           </div>
                         </div>
 
@@ -295,9 +318,12 @@ function Register() {
                               name="mobile"
                               value={formData.mobile}
                               onChange={handleChange}
-                              
                             />
-                            {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
+                            {errors.mobile && (
+                              <small className="text-danger">
+                                {errors.mobile}
+                              </small>
+                            )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
@@ -310,7 +336,6 @@ function Register() {
                               name="category"
                               value={formData.category}
                               onChange={handleChange}
-                              
                             >
                               <option value="">All Categories</option>
                               <option value="1">Software</option>
@@ -318,17 +343,27 @@ function Register() {
                               <option value="3">Office Furniture</option>
                               <option value="4">Stationery</option>
                             </select>
-                            {errors.category && <small className="text-danger">{errors.category}</small>}
+                            {errors.category && (
+                              <small className="text-danger">
+                                {errors.category}
+                              </small>
+                            )}
                           </div>
                         </div>
 
-                        <div className="p-2 mt-3">
+                        <div className="p-2 mt-3 flex flex-row flex-wrap gap-2">
                           <button
-                            className="btn btn-primary btn-block waves-effect waves-light"
+                            className="btn btn-primary flex-1 waves-effect waves-light mr-2"
                             type="submit"
                           >
                             Register
                           </button>
+                          <Link
+                            className="btn btn-primary flex-1 waves-effect waves-light"
+                            to="/login"
+                          >
+                            Back to Login
+                          </Link>
                         </div>
                       </div>
                     </form>

@@ -13,7 +13,7 @@ function Rfp() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0L3JmcHN5c3RlbS9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNjg0OTkzMjMwLCJleHAiOjE2ODQ5OTY4MzAsIm5iZiI6MTY4NDk5MzIzMCwianRpIjoiT2dDSk14OUZ1bzlrbEVwQSIsInN1YiI6IjQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.-XFDzl6N9b1JKW0vQH9ErQ-jhO4497D4g1S5GXbVXcA";
+      const token = Cookies.get("token");
       console.log("token", token); 
       if (!token) {
         toast.error("Authentication token not found in cookies");

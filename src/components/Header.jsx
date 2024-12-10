@@ -1,13 +1,31 @@
 import { Link } from "react-router";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 function Header() {
+  const navigate = useNavigate();
+
+  const token = Cookies.get("token");;
+const decoded = jwtDecode(token);
+
+console.log("decoded",decoded)
+  const handleLogout = () => {
+    // Clear token from cookies
+    Cookies.remove("token");
+
+    // Redirect to login page
+    navigate("/login"); 
+  };
+
+
   return (
     <header id="page-topbar">
       <div className="">
         <div className="d-flex">
           {/* LOGO */}
           <div className="navbar-brand-box">
-            <Link to="/" className="">
+            <Link to="/dashboard" className="">
               <span className="">
                 <img
                   src="assets/images/velocity_logo.png"
@@ -22,12 +40,12 @@ function Header() {
       <div className="d-flex pr-2">
         <div className="dropdown d-inline-block">
           <span className="d-none d-xl-inline-block ml-1 text-white mr-2" key="t-henry">
-            Welcome Henry
+            Welcome User 
           </span>
           &nbsp;&nbsp;
-          <Link class="" href="#">
+          <button onClick={handleLogout}>
             <span>Logout</span>
-          </Link>
+          </button>
         </div>
       </div>
     </header>

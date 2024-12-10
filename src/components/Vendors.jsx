@@ -1,24 +1,54 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { useState } from "react";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import Header from "./Header";
 import SideleftBar from "./SideleftBar";
 
 function Vendors() {
   const [vendorList, setVendorList] = useState([]);
-  
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); // Page state
+  const itemsPerPage = 5; // Items per page
+
+  // Filter vendors by search
+  const SearchedVendors = vendorList.filter((vendor) =>
+    vendor.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Get current page's vendors (pagination logic)
+  const currentVendors = SearchedVendors.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle page changes
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(SearchedVendors.length / itemsPerPage);
+
+  // Calculate the range of pages to display (3 pages at a time)
+  const pageNumbers = [];
+  let startPage = Math.max(1, currentPage - 1);
+  let endPage = Math.min(totalPages, currentPage + 1);
+
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       // Get Cookies
       const token = Cookies.get("token");
-      console.log("token", token); 
       if (!token) {
         toast.error("Authentication token not found in cookies");
         return;
       }
+
       // API fetch
       try {
         const response = await fetch(
@@ -26,23 +56,18 @@ function Vendors() {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           }
         );
-        console.log("res",response)
+
         const data = await response.json();
-        console.log("data",data)
-
-        if (data.response == "error") {
-          toast.error('Action not allowed')
-        } 
-
-       
+        if (data.response === "error") {
+          toast.error("Action not allowed");
+        }
 
         setVendorList(data.vendors);
-        
       } catch (err) {
         console.error(err.message);
       }
@@ -55,24 +80,15 @@ function Vendors() {
     <div data-sidebar="dark">
       <Toaster />
       <div id="layout-wrapper">
-        <Header/>
-
-        {/* <!-- ========== Left Sidebar Start ========== --> */}
-        <SideleftBar/>
-        {/* <!-- Left Sidebar End -->
-
-<!-- ============================================================== -->
-<!-- Start right Content here -->
-<!-- ============================================================== --> */}
+        <Header />
+        <SideleftBar />
         <div className="main-content">
           <div className="page-content">
             <div className="container-fluid">
-              {/* <!-- start page title --> */}
               <div className="row">
                 <div className="col-12">
                   <div className="page-title-box d-flex align-items-center justify-content-between">
                     <h4 className="mb-0 font-size-18">Vendors List</h4>
-
                     <div className="page-title-right">
                       <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item">
@@ -82,11 +98,24 @@ function Vendors() {
                       </ol>
                     </div>
                   </div>
+                  <div className="d-flex flex-wrap justify-content-between mt-3">
+                    <div className="form-group d-flex w-full sm:w-auto">
+                      <input
+                        type="text"
+                        className="form-control flex-grow"
+                        id="search"
+                        name="search"
+                        value={search}
+                        placeholder="Enter vendor's name"
+                        onChange={(e) => setSearch(e.target.value)}
+                      />
+                      <button className="btn btn-sm btn-primary ml-2">
+                        Search
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* <!-- end page title -->
-
-            <!-- end row --> */}
 
               <div className="row">
                 <div className="col-lg-12">
@@ -114,10 +143,12 @@ function Vendors() {
                               <th>Action</th>
                             </tr>
                           </thead>
-                          <tbody  >
-                            {vendorList.map((vendor, index) => (
+                          <tbody>
+                            {currentVendors.map((vendor, index) => (
                               <tr key={index}>
-                                <th scope="row">{index + 1}</th>
+                                <th scope="row">
+                                  {index + 1 + (currentPage - 1) * itemsPerPage}
+                                </th>
                                 <td>{vendor.name}</td>
                                 <td>{vendor.email}</td>
                                 <td>{vendor.mobile}</td>
@@ -144,75 +175,65 @@ function Vendors() {
                         </table>
                       </div>
 
-                      <div className="row pt-3">
-                        <div className="col-sm-12 col-md-5">
-                          <div
-                            className="dataTables_info"
-                            id="datatable_info"
-                            role="status"
-                            aria-live="polite"
-                          >
-                            Showing 1 to 5 of 5 entries
-                          </div>
-                        </div>
-                        <div className="col-sm-12 col-md-7 dataTables_wrapper ">
-                          <div
-                            className="dataTables_paginate paging_simple_numbers"
-                            id="datatable_paginate"
-                          >
-                            <ul className="pagination">
+                      {/* Pagination */}
+                      <div className="pagination-container">
+                        <nav aria-label="Page navigation example">
+                          <ul className="pagination justify-content-center">
+                            <li
+                              className={`page-item ${
+                                currentPage === 1 ? "disabled" : ""
+                              }`}
+                            >
+                              <a
+                                className="page-link"
+                                href="#"
+                                onClick={() =>
+                                  handlePageChange(currentPage - 1)
+                                }
+                              >
+                                Previous
+                              </a>
+                            </li>
+                            {pageNumbers.map((page) => (
                               <li
-                                className="paginate_button page-item previous disabled"
-                                id="datatable_previous"
+                                key={page}
+                                className={`page-item ${
+                                  currentPage === page ? "active" : ""
+                                }`}
                               >
                                 <a
-                                  href="#"
-                                  aria-controls="datatable"
-                                  data-dt-idx="0"
-                                  tabIndex="0"
                                   className="page-link"
+                                  href="#"
+                                  onClick={() => handlePageChange(page)}
                                 >
-                                  Previous
+                                  {page}
                                 </a>
                               </li>
-                              <li className="paginate_button page-item active">
-                                <a
-                                  href="#"
-                                  aria-controls="datatable"
-                                  data-dt-idx="1"
-                                  tabIndex="0"
-                                  className="page-link"
-                                >
-                                  1
-                                </a>
-                              </li>
-                              <li
-                                className="paginate_button page-item next disabled"
-                                id="datatable_next"
+                            ))}
+                            <li
+                              className={`page-item ${
+                                currentPage === totalPages ? "disabled" : ""
+                              }`}
+                            >
+                              <a
+                                className="page-link"
+                                href="#"
+                                onClick={() =>
+                                  handlePageChange(currentPage + 1)
+                                }
                               >
-                                <a
-                                  href="#"
-                                  aria-controls="datatable"
-                                  data-dt-idx="2"
-                                  tabIndex="0"
-                                  className="page-link"
-                                >
-                                  Next
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
+                                Next
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* <!-- end row --> */}
             </div>
           </div>
-          {/* <!-- End Page-content --> */}
 
           <footer className="footer">
             <div className="container-fluid">
@@ -220,10 +241,9 @@ function Vendors() {
                 <div className="col-sm-6">2022 &copy; Copyright.</div>
                 <div className="col-sm-6">
                   <div className="text-sm-right d-none d-sm-block">
-                    Support Email:
+                    Support Email:{" "}
                     <a href="#" target="_blank" className="text-muted">
-                      {" "}
-                      support@velsof.com{" "}
+                      support@velsof.com
                     </a>
                   </div>
                 </div>
@@ -231,7 +251,6 @@ function Vendors() {
             </div>
           </footer>
         </div>
-        {/* <!-- end main content--> */}
       </div>
     </div>
   );
